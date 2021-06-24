@@ -142,15 +142,21 @@ export default (app: express.Application): void => {
 
     app.use((error, req, res, next) => {
         Logger.error(
-            req.originalUrl +
-                ' -> ' +
+            req.originalUrl + ' -> ' + error &&
+                error.details &&
+                error.details.get('body') &&
+                error.details.get('body').details &&
+                error.details.get('body').details.length > 0 &&
                 error.details.get('body').details[0].message
         );
-        if (error.toString().indexOf('celebrate') !== -1) {
+        if (error && error.toString().indexOf('celebrate') !== -1) {
             return res.status(200).json({
                 success: false,
                 error:
-                    'celebrate error ' +
+                    'celebrate error ' + error.details &&
+                    error.details.get('body') &&
+                    error.details.get('body').details &&
+                    error.details.get('body').details.length > 0 &&
                     error.details.get('body').details[0].message,
             });
         }
