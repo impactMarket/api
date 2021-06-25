@@ -148,8 +148,10 @@ const cacheWithRedis = apicache.options(
     process.env.NODE_ENV === 'test'
         ? {}
         : {
-              redisClient: redis.createClient({
-                  url: config.redis,
+              redisClient: redis.createClient(config.redis, {
+                  tls: {
+                      rejectUnauthorized: false,
+                  },
               }),
           }
 ).middleware;
