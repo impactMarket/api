@@ -408,7 +408,7 @@ class ChainSubscribers {
         } catch (e) {
             // as this else catch events from anywhere, it might catch unwanted events
             if (e.reason !== 'no matching event') {
-                Logger.error(e);
+                Logger.error('no matching event', e);
             }
         }
     }

@@ -52,7 +52,7 @@ export default async (): Promise<void> => {
     process.on('unhandledRejection', (error: any) => {
         // close all RPC connections and restart when available again
         const strError = JSON.stringify(error);
-        Logger.error(strError);
+        Logger.error('unhandledRejection', strError);
         if (
             strError.indexOf('eth_') !== -1 && // any eth_ surely is related to the RPC
             (strError.indexOf('figment') !== -1 ||
