@@ -1,10 +1,14 @@
 import { ExchangeRatesAttributes } from '@models/app/exchangeRates';
-import redis from 'redis';
 import { promisify } from 'util';
 
-import config from '../../config';
-import { models } from '../../database';
+import { models, redisClient } from '../../database';
 
+// TODO: this workaround will only exist until exchange rates are not returned on /welcome and /auth endpoints anymore
+// and then, apicache will be used
+let getRedis;
+if (process.env.NODE_ENV !== 'test') {
+    getRedis = promisify(redisClient.get).bind(redisClient);
+}
 // const setRedis = promisify(redisClient.set);
 
 export default class ExchangeRatesService {
@@ -13,10 +17,6 @@ export default class ExchangeRatesService {
 
     public static async get(): Promise<ExchangeRatesAttributes[]> {
         if (process.env.NODE_ENV !== 'test') {
-            const redisClient = redis.createClient({
-                url: config.redis,
-            });
-            const getRedis = promisify(redisClient.get).bind(redisClient);
             const rates = await getRedis(this.redisKey);
             if (rates === null) {
                 const currentRates = await this.exchangeRates.findAll({
